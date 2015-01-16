@@ -1,0 +1,309 @@
+This should enable multiplication of moderately large numbers on the fingers using binary digits.
+
+On each hand represent any 2 binary numbers between 0 and 31. These will be factors. The leftmost 
+factor will be the base for the summing column and the rightmost factor will be the riding number.
+Moving along the riding number from right to left ( least significant digit to most significant ),
+all starting rightmost ( least most significant ) 0s can be shifted into the answer right away. Upon
+reaching the first rightmost 1 shift the rightmost bit from the summing column into the answer column
+replacing the 1 in the riding number. If this 1 is leftmost digit in the riding number ( IE. the riding
+number is a exponent of 2 ) then shift all remaining digits from the summing column to get answer. If not
+the leftmost digit then continue along the riding number with the following rules: When 0 shift rightmost 
+bit from summing column into the answer, no adding step.  When 1 is encountered add the left hand 
+factor into the summing column then shift rightmost bit into answer replacing the 1 that was encountered.
+
+
+00111 01011 < 7 * 11 < Number of hours 7-11 originally was open for..
+00011 ----1 < shift bit from col1 on first least significant 1 in col2
+00111 < add fact1 to col1 since next bit is 1
+01010 < add step total
+00101 ---01 < shift bit from col1
+00010 --101 < shift bit from col1 on 0s in col2, no add step
+00111 < add fact1 to col1 since next bit is 1
+01001 < add step total
+00100 -1101 < shift bit from col1
+00010 01101 < shift bit from col1 on 0s in col2, no add step, correct answer!!!
+
+01111 11010 < 15 * 26 < 2 randomly chosen numbers.
+01111 ----0
+00111 ---10
+00011 --110
+01111 < add step
+10010 < total of add step
+01001 -0110
+01111 < add step
+11000 < total of add step
+01100 00110 < Correct answer!!!
+
+Originally I was going to say that this would have to be limited to numbers smaller than 20 since the 
+addition step could overflow the summing column, as in the example here:
+
+11111 11111
+01111 ----1 < shift bit from col1
+11111 < add fact1 to col1 since next bit is 1
+101110 < add step total
+10111 ---01 < shift bit from col1
+11111 < add fact1 to col1 since next bit is 1
+110110 < add step total
+11011 --001 < shift bit from col1
+11111 < add fact1 to col1 since next bit is 1
+111010 < add step total
+11101 -0001 < shift bit from col1
+11111 < add fact1 to col1 since next bit is 1
+111100 < add step total
+11110 00001 < last shift to get total and correct answer!!!
+
+This works and gives the correct answer, and if you use extra bits from toes or pennies as discussed below 
+it is doable.  However before considering the use of extra bits I managed to devise a way to complete the 
+calculation within the given register size by adding a couple extra steps. Instead of adding fact1 back into
+the summing column as usual, the value for the 1s column only is computed and then that is shifted into the 
+answer.  Then shift both the current value of the summing column and the value of fact1 to the right, halving 
+them. Then you add those 2 values which will fit handily in your five finger register.  Then as a final extra
+step, you must add a 1 to the sum if fact1 was odd.  This is the remainder from the halving.  Below are shown
+a few examples, including an instance of a misapplied +1 to an even factor:
+
+fact1 fact2
+11111 11111 < 31 * 31 largest pair of factors available on fingers.
+01111 ----1 < shift bit from col1
+11111 < add fact1 to col1 !! alert too large
+psum0 ---01 < add 1s place of col1 and fact1 leaves 0 in 1s shift 
+00111 < partial sum shifting
+01111 < pre shifted add
+10111 < + 1 fudge adds to 10110
+11111 < add fact1 to col1 !! alert too large
+psum0 --001 < add 1s place of col1 and fact1 leaves 0 in 1s shift 
+01011 < partial sum shifting
+01111 < pre shifted add
+11011 < + 1 fudge adds to 11010
+11111 < add fact1 to col1 !! alert too large
+psum0 -0001 < add 1s place of col1 and fact1 leaves 0 in 1s shift
+01101 < partial sum shifting
+01111 < pre shifted add
+11101 < +1 fudge sums to 11100
+11111 < add fact1 to col1 !! alert too large
+psum0 00001 < add 1s place of col1 and fact1 leaves 0 in 1s shift
+01110 < partial sum shifting
+01111 < pre shifted add
+11110 < +1 fudge sums to 11101
+11110 00001 < result of col1 and col2, correct answer!!!  
+
+11111 11110
+11111 ----0 < 0 in least significant drops in no shift
+01111 ---10 < shift bit from col1
+11111 < add fact1 to col1 since next bit is 1
+psum0 --010 < add 1s place of col1 and fact1 leaves 0 in 1s shift
+00111 < partial sum shifting
+01111 < pre shifted add
+10111 < + 1 fudge adds to 10110
+11111 < add fact1 to col1 since next bit is 1
+psum0 -0010 < add 1s place of col1 and fact1 leaves 0 in 1s shift
+01011 < partial sum shifting
+01111 < pre shifted add
+11011 < + 1 fudge adds to 11010
+11111 < add fact1 to col1 since next bit is 1
+psum0 00010 < add 1s place of col1 and fact1 leaves 0 in 1s shift
+01101 < partial sum shifting
+01111 < pre shifted add
+11101 < +1 fudge sums to 11100
+11101 00010 < correct answer!!!
+
+11100 11010 < 28 * 26
+11100 ----0 < 0 in least significant drops in no shift
+01110 ---00 < shift bit from col1 on first least significant 1
+00111 --000 < shift bit from col1 on 0s, no add step
+11100 < add fact1 to col1 since next bit is 1 - too large!
+psum1 -1000 < add 1s place of col1 and fact1 leaves 1 in 1s place, shift
+00011 < partial sum shifting
+01110 < pre shifted add
+10010 < + 1 fudge adds to 10001
+11100 < add fact1 to col1 since next bit is 1 - too large!
+psum0 01000 < add 1s place of col1 and fact1 leaves 0 in 1s place, shift
+01001 < partial sum shifting
+01110 < pre shifted add
+11000 < + 1 fudge adds to 10111
+11000 01000 < wrong answer - +1 fudge fails on even factors in summing column
+
+11100 11010 < 28 * 26 < retry w/o fudge
+11100 ----0 < 0 in least significant drops in no shift
+01110 ---00 < shift bit from col1 on first least significant 1
+00111 --000 < shift bit from col1 on 0s, no add step
+11100 < add fact1 to col1 since next bit is 1 - too large!
+psum1 -1000 < add 1s place of col1 and fact1 leaves 1 in 1s place, shift
+00011 < partial sum shifting
+01110 < pre shifted add
+10001 < sum w/o fudge
+11100 < add fact1 to col1 since next bit is 1 - too large!
+psum1 11000 < add 1s place of col1 and fact1 leaves 1 in 1s place, shift
+01000 < partial sum shifting
+01110 < pre shifted add
+10110 < sum w/o fudge
+10110 11000 < correct answer!!! Seems to follow fudge only needed on odd summing column.
+
+- NEW -
+
+Single Register Multi Remainder Trail Overlay Multiplication
+
+This method allows for much larger numbers to be multiplied with resultant answers up to 65,535 using all 6 
+extra bits from the feet.  The method is fairly simple to describe. First use the remainder trail method
+to place the larger of the numbers on the single register.  Then starting from the leftmost 1 digit
+drop the 1 and from that column begin to remainder trail to the left with the first digit replacing the 1 
+and moving from there.  On the first run the number will simply be placed at that last position.  Moving to 
+the right repeat the process at the next 1, this time you will most likely need to perform the addition 
+steps as you begin to create the number and its digits interact with the digits from the previous remainder
+trail action.  Continue this method until the rightmost digit (the 1's column) is reached and the final
+remainder trail addition is completed.
+
+382 * 29
+01011 11110 = 382
+00000 11101 = 29
+
+0111 01011 11110 
+   1 1101
+1001 00011 11110
+     11101
+1001 11111 11110
+      1110 1
+1010 01101 11110
+       111 01
+1010 10100 11110
+        11 101
+1010 11000 01110
+         1 1101
+1010 11010 00110 = 11,078
+
+This method works whether you use remainder trail or decomposition but remainder trail is probably easier
+to track.  Either way this gets difficult to track with very large numbers.
+
+- END NEW -
+
+On adding binary numbers on the fingers:
+This isn't as hard as it looks.  Lets take the add steps from the last example and step through.
+00011
+01111 +
+In this step 00011 is on the fingers. And similar to the way we use riding numbers in the multiplication
+we apply the number we are adding from rightmost digit to leftmost digit. The thing that makes this easy 
+is to remember the game Go, in which groups of black or white stones can be flipped. Likewise when a 1 is
+applied to a continuous string of 1 digits they are all flipped to 0 and the one carried to the next available
+0 slot.  So our fingers are easily shifted to 00100.
+00100       < running answer.
+0111- ----1 < remaining digits - used digit
+Moving along the added number where 0s encounter 1s fill the 1 into the column. So fingers become:
+00110       < running answer.
+011-- ---11 < remaining digits - used digits
+Then:
+01010       < running answer.
+01--- --111 < remaining digits - used digits
+Then:
+10010       < final answer.
+0---- -1111 < last significant digit used.  All done.
+
+Of course this technique is more efficient when adding the smaller number into the larger like so:
+01111
+00011 +
+10000 < Go style flip carry for first adding digit.
+0001- ----1 < remaining digits - used digit
+10010 < 1 fills into 0 no contest. Final answer.
+000-- ---11 < last significant digit used.  All done.
+
+Another method of addition "Decomposition overlay":
+It occurs to me that when trying to convert decimal to binary the best(only?) method is decomposition from most 
+significant bit to the least.  This usually has to be done for both numbers involved in the addition at some point.
+So what happens if we just do the decomposition of both numbers into the same register and simply perform the flipping
+rule on the bits when they overlap?  Well you get the right answer to the addition.  This has a few benefits over 
+the other method in that it collapses the addition step into the conversion step, it only requires one register, and
+because of that can be used to add larger numbers together since all fingers can be used for the register.  
+
+285 + 633 < First decompose 285 with the first largest binary digit that fits ( 256 ).
+01000 1---- < 256 + 16 =272 16 is the next to decompose in. Getting close.
+01000 11--- < 272 + 8 = 280
+01000 11101 < 280 + 5 = 285 Skipped a head here since my binary practice makes 5 as 101 easy to add in at this point.
+So our first number is set in the register.  Time to decompose in the second number:
+11000 11101 < 512 is the first largest binary digit that fits.
+11010 11101 < 512 + 64 = 576 < 64 is the next.
+11011 11101 < 576 + 32 = 608 < 32 is next.  These 2 had no conflict or need for flipping.
+11100 01101 < 608 + 16 = 624 < 16 is next and hits an existing 1 so we flip all ones up to the next 0.
+11100 10101 < 624 + 8 = 632 < 8 is next and a flip is in order.
+11100 10110 < 632 + 1 = 633 < 1 is last and one last flip.  This should be the right answer.
+11100 10110 = 512 + 256 + 128 + 16 + 4 + 2 = 918
+
+On binary subtraction:
+This follows the same basic principal as the addition in that what looks hard, the borrowing, is really just another 
+Go ( or Othello if you prefer ) style flipping of bits.  When subtracting 1 from 0 simply flip all sequential bits in 
+higher order until you reach a 1 and flip that to a 0.
+10001 < 17 - 7 = 10
+00111 -
+10000 < 1 subtracts from 1 and leaves 0.  Makes sense.
+0011- ----1 -
+01110 < Go style flip 
+001-- ---11 -
+01010 < 1 subtracts from 1 and leaves 0.  Makes sense. Final answer.
+00--- --111 < last significant digit used.  All done.
+
+
+10110 < 22 - 5 = 17
+00101 -
+10101 < Flip to the 1 in the next place.
+0010- ----1 -
+10101 < 0 - 0 = 0, no change here, move to next bit.
+001-- ---01 -
+10001 < 1 subtracts from 1 and leaves 0.  Makes sense. Final answer.
+00--- --101 < last significant digit used.  All done.
+
+In answer to the above question I posed the answer is that yes you can convert to binary via another method and an 
+easier one too. One of the neat things I noticed in peasant math is that if you take each odd row and make it a 1 and 
+each even row as a 0 you will have the binary value of the halving number.  This "Remainder Trail" is a very good method
+mainly because the math needed is simpler and requires no knowledge of binary to actually convert the number.  Just the
+ability to recognize odd numbers and divide by 2. I've tested and the addition and subtraction methods above work with
+the bit flipping method when overlayed this way. Remainder trail overlay.  Peasants/Egyptian overlay?
+
+Division, Wikipedia shows binary division to be like decimal long division as a series of repeated subtractions.
+So it seems to me that for this procedure the best use of the hands is with the left as a register to hold the 
+answer and with the right to hold a subtraction sum.  With binary division you will only ever be subtracting the 
+divisor and never a multiple of the divisor as you would with decimal division.  With this technique you must 
+remember the divisor value or have it written or represented with pennies.  This only works to divide numbers
+in a 5 bit register however.  So for division more than any other operation it will be helpful to have paper
+or pennies to keep track of the divisor, the dividend, and the answer.  Then you can track the subtraction sum 
+only on both hands.
+
+-New division is a hard nut to crack, other methods to simplify division investigated include partial and reciprocal.  
+partial would require tracking even more registers and binary reciprocals are unwieldy to calculate and use.  
+reverse multiplication algorithm should work, basically reversing the multiplication overlay steps.  
+The problem I've had is this seems to only work if done from the least most significant bits and only for evenly
+divisible numbers. With numbers that do not divide evenly the remainder remains in the buffer as you move along from the right.
+This presents a challenge as the remainder may overlap with the answer which brings us back to needing another register.
+Determining when to shift the first subtraction to the left was a challenge at first as this method could be applied 
+such that the first subtraction is always performed on the first bit, basically making every dividend odd.  In the case
+of 30/5 it resulted in 2 subtractions in the ones column and a remainder of 4 which add to the right answer of 6. 
+Then i looked up rules on parity ( even and odd ) relating to multiplication.  So if the dividend and divisor are both odd
+then starting in the ones column is fine as the answer will be odd.  If the dividend is even and the divisor is odd
+then the quotient will be even, the method of assuming 0s for the first digits and shifting the first subtraction to the left
+until the least significant bit of the divisor aligns with the least significant 1 of the dividend.  Even divided by even
+does not have a clearly defined rule in decimal that I saw but I believe in binary that it may be that the number of relative
+0s in the least significant digit.  Perhaps that if the dividend has more than divisor then if you scale the 2 you will have
+an an even dividend and an odd divisor ( assuming you aren't just left with 1 [ that is that the divisor isn't an power of 2 ] ).
+From Wikipedia parity page: "But when the quotient is an integer, it will be even if and only if the dividend has more factors of two than the divisor."
+Scaling the dividend and divisor does seem to work with regular division subtracting from the left but seems to fail with certain number that 
+do not divide evenly when done from the right, unless we start from the position the dividend would be in when shifted.  So for 30/12 you would start in the 
+1/2s column and get 10.1 ( 2.5 decimal ).  This doesn't seem to help create a universal algorithm.  If either way you need to track a register for the answer
+or the remainder then the regular division would seem more natural overall, but with the reverse at least a subset of dividends and divisors will 
+be solvable in a single register.
+-End New
+
+On overflow registers ( aka toes ) and non-standard issue registers (aka appendages aka pennies and paper):
+One idea that floated up during research on this subject was the use of ones big toe as extra bits to overflow 
+large numbers into.  This would help negate the need for the partial summing that was used in earlier 
+multiplication examples. Taking the idea a step further...  One could use up to 3 distinguishable bits that 
+would not be too hard to set in a seated position.  Using the big toe as the least significant (1s), 
+the pinkie toe as the next most significant (2s), and the heel as the next most (4s), it is possible to 
+keep any combination in contact with the ground.  You can try now and see how you can count up to 7 on these 
+digits.  This opens up the largest numbers one could manipulate without any external tools.  Of course even 
+without the addition of the extra bits from the feet, unless one is very practised with binary it can be very 
+hard to keep the positions of any 2 numbers you are performing a math process on.  So it may be useful, 
+especially to beginners with binary or this calculation system and for use with larger values, to use some 
+kind of markers to keep track of original factors and/or the running answer.   The simplest markers would be
+just to mark the values you are working with on paper in such a way that the fingers can be placed under the marks 
+to easily work with them.  Another is to use pennies in an up or down down position relative to a baseline to 
+indicate value.  The advantage of pennies is that you can flip the value relatively easily with just one finger.
+Then the pennies can be used to store a rolling sum or answer register.  Though they can be more difficult to
+set up.  And at that point you are beginning to use enough apparatus that a proper binary abacus might be worth
+considering.
+
