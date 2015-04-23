@@ -1,0 +1,185 @@
+Binary Finger Abacus
+
+This system developed based off of Peasant Math aka Egyptian multiplication.  It is meant to be a way to help understand binary numbers and binary math. It is not, necessarily, an efficient tool for general math.  
+
+The system uses binary finger representation such as that described here: http://en.wikipedia.org/wiki/Finger_binary.  The most comfortable position seems to be with the hands on a table facing away from the body with the wrists in contact and the fingers on the table in a position similar to typing.  Zeros represented with fingers on the table and ones represented by fingertips lifted.  These finger positions can of course be inverted and another pose can be used as long as it is clear which position represents 1 or 0, where columns belong, and the fingers can be moved to represent bits in a 1 or 0 state with sufficient comfort.
+
+The abacus is able to perform the following functions that build on each other: 
+converting to binary, this can be done with 3 rules and no knowledge of binary representation. 
+carrying/borrowing ( which can be done in binary with simple rules and no calculation).
+adding and subtracting ( this will be done with the combination of the converting rules and the carrying/borrowing flipping ).
+multiplication ( a modification of the adding process ).
+division ( subtraction with an extra placeholder required or extra steps and cool math tricks ).
+
+
+
+Converting numbers from decimal to binary:  
+The Arabic numbers you may be accustomed to are only a representation of a value.  The number “15”, as a value, is independent of the symbols used and can be written in different representations; for example XV in Roman numerals.  In binary it would be 1111.  Regardless of which representation is used the value is the same.  These instructions allow you to convert numbers to a binary representation with no deep knowledge or binary or higher math.
+In binary the 2 hands can hold values from 0 to 1023.  To convert an Arabic numeral to binary requires only two operations: dividing by 2 and subtracting 1.  The process is to begin at the least significant digit ( the ones column ), for our example we will assume that is represented by the pinky finger of the right hand.  
+At that position we take the number we are to convert and assess if it is even or odd.  If it is odd we subtract 1, and add one to the binary "ones" . column.  
+Then divide the number by 2 and move to the next binary digit.
+Assess if the number remaining is equal to 1.  If not go to step 1 and continue to loop.  If so add that 1 to the binary column and the process is complete.
+Here is an example converting 163 to binary ( Note that in this example I mention the column value but it is not necessary to track that during the conversion ):
+----- ----* : We begin with no value on the fingers and our focus on the one column.
+----- ----1 : 163 is odd so we subtract 1 leaving 162 and place 1 in the binary one column. 
+----- ---*1 : We move our focus to the 2 column and divide 162 by 2 getting 81.
+----- ---11 : 81 is odd, subtract 1 leaving 80 and place 1 in the binary 2 column. 
+----- --*11 : Move focus to the 4 column and divide 80 by 2 getting 40.
+----- --011 : 40 is even so a 0 is placed in the binary 4 column ( aka the middle finger ).
+----- -*011 : Move focus to the 8 column and divide 40 getting 20.
+----- -0011 : 20 is even, place 0 in the 8 column.
+----- *0011 : Move focus to 16 column, divide 20 getting 10.
+----- 00011 : 10 is even, 0 in the 16 column.
+----* 00011 : Move to 32 column, divide 10 getting 5.
+----1 00011 : 5 is odd, subtract 1 leaving 4 and place 1 in 32 column.
+---*1 00011 : Move to 64 column, divide 4 getting 2.
+---01 00011 : 2 is even, 0 in the 64 column.
+--*01 00011 : Move to 128 column, divide 2 getting 1.
+--101 00011 : Finally we are left with 1 and place 1 into the 128 column and are done.
+
+This leaves us with a final conversion of 163 to 10100011.  We can add the values of the individual columns to verify: 128 + 0 + 32 + 0 + 0 + 0 + 2 +1 = 163.
+
+Converting numbers from binary to decimal:
+The above procedure can be reversed to convert from binary back to decimal.  For example lets use the binary number 110011 and convert it to decimal.
+----1* 10011 : We start this process at the leftmost ( most significant ) bit and count it as 1.
+----1 1*0011 : Then as we proceed right we double the number 1 x 2 = 2.  Then if the bit is set to one we add that 1 before proceeding right again. So 2 + 1 = 3. And so our count is at 3.
+----1 10*011 : Then again proceed right and double. 3 x 2 = 6.  The bit is set to 0 so we do not add.  Count is set to 6.
+----1 100*11 : Proceeding right we double: 6 x 2 = 12.  Bit is 0 so count is 12.
+----1 1001*1: Proceed and double: 12 x 2 = 24.  Bit is 1 so count is 25.
+----1 10011*: Proceed and double: 25 x 2 = 50.  Bit is 1 final count is 51.
+
+And this checks out as 110011 is 32 + 16 + 0 + 0 + 2 + 1 = 51.
+
+Carrying and Borrowing:
+Binary is unique amongst number systems in that it is able to perform carrying and borrowing functions with no calculation required. Whether adding or subtracting, groups of 1s or 0s in a row together can be flipped as a single unit like dominos.  This is a crucial fact that allows the addition and subtraction tasks to be performed by a smaller number of operations.
+Examples:
+Carrying: 
+  10111 
++00001
+=11000
+The addition of the 1 to the rightmost column carries to the left all the way to the next open 0, flipping all of the ones to zeros as it does.
+Borrowing:
+      11000
+    - 00001
+    =10111
+    The subtraction of the 1 from the 0 in the rightmost column borrows all the way to the next 1, flipping all of the zeros to 1 as if does.
+
+
+Adding:
+Any 2 numbers that sum to less than 1023 can be added on the finger abacus by converting both numbers in sequence and carrying/flipping where the 1 values overlap.
+For an example lets start with our conversion of 163 and add 55 to it.  We begin with the end of the first conversion with the binary value set:
+    --101 00011 = 163
+Then we will begin the next conversion:
+--101 0001*1* : We begin with focus on the least significant digit again, the one column.
+--101 00100 : 55 is odd so we subtract 1 and leaving 54 and add 1 to the one column.  The 2 1s in the number already converted ( at the 1 and 2 columns ) are flipped to 0s until we reach an existing 0 ( at the 4 column ) and flip it to a 1.
+--101 001*0*0 : Next we move focus to the 2 column and 54 divided by 2 is 27.
+--101 00110 : 27 and is odd, so we subtract 1 leaving 26 and add 1 to the 2 column.  The 2 column was zero so the 1 goes into the column with no flipping.
+--101 00*1*10 : Move focus to the 4 column and divide 26 getting 13.
+--101 01010 : 13 is odd so subtract 1 leaving 12 and add 1 to the 4 column flipping the digit to 0 and carrying to the next column which is a zero.
+--101 0*1*010 : Move focus to the 8 column and divide 12 getting 6.
+--101 01010 : 6 is even so the existing 1 in the 8 column is unchanged and no carrying done.
+--101 *0*1010 : Move focus to the 16 column and divide 6 getting 3.
+--101 11010 : 3 is odd so subtract 1 leaving 2 and add 1 to the 16 column. Which is zero so no carrying.
+--10*1* 11010 : Move focus to the 32 column and divide 2 getting 1.
+--110 11010 : 1 is the end of our conversion and we add it to the 32 column which has a 1 and carry to the next column.  We have finished our conversion and have a final answer for the addition.
+
+163 + 55 = 218 and the binary adds to 128 + 64 + 0 + 16 + 8 + 0 + 2 + 0 = 218.
+
+Subtraction:
+For subtraction the process is the similar except that flipping method is inverted.  Lets look at an example of 163 - 55.
+--101 0001*1* : Start with focus on the 1 column.
+--101  00010 : 55 is odd so we subtract 1 leaving 54 ( conversion of the numbers is the same ) but subtract 1 from the one column. 1-1=0, so we get 0 in the one column with no borrowing.
+--101 000*1*0 : Move focus to the 2 column and divide 54 by 2 getting 27.
+--101 00000 : 27 is odd, subtract 1 = 26 and subtract 1 from the 2 column leaving 0.
+--101 00*0*00 : Move focus to 4 column and divide 26 getting 13.
+--100 11100 : 13 is odd, subtract 1 = 12, subtract 1 from 4 column which is 0. 0-1 must borrow, so flip all the 0s to 1s until we reach a column with 1 and flip it to 0. In this case we go 3 columns till we borrow the 1 from the 32 column.
+--100 1*1*100 : Move focus to the 8 column and divide 12 getting 6.
+--100 11100 : 6 is even so we subtract 0 from the 8 column and 1-0=1 so the column is unchanged.
+--100 *1*1100 : Move focus to the 16 column and divide 6 getting 3.
+--100 01100 : 3 is odd, subtract 1 leaving 2 and subtract 1 from the 16 column. 1-1=0 so the 16 column is now 0.  No borrowing.
+--10*0* 01100 : Move focus to the 32 column, divide 2 getting 1.
+---11 01100 : 1 is the end of our conversion and we subtract 1 from the 32 column and borrow all the way to the 128 column flipping 0s to 1s until we reach that and make it 0, effectively shortening the number by one bit. This is our final answer
+
+163 - 55 = 108 and the binary sums to 64 + 32 + 0 + 8 + 4 + 0 + 0 = 108.
+
+2’s compliment subtraction: 
+An alternate method for subtraction is actually to do it all with addition.  Here are a couple examples. Always start with the subtrahend (number being subtracted) first in the register.
+
+Subtracting smaller number from larger, we will be doing 10 - 5 or -5 + 10:
+  00101 : 5
+  01010 : 10
+
+  11010 : Getting the 1’s compliment of 5 by inverting the bits, even the leading 0s.
+  11011 : Get the 2’s compliment by adding 1 to the 1’s compliment.
++01010 : Add 10 to that.  You may use the overlay method as described above.
+100101 : Result. Well, almost. This number is actually 37, but we drop every bit more than 1 digit larger than the largest number in the operation. The bit in that position will determine if the result is positive or negative. So the actual result is…
+ 00101 : Result. Positive 5.
+
+Subtracting larger number from smaller:
+  00101 : 5
+ -01010 : minus 10
+
+  10110 : 2’s compliment of 10 ( invert all bits and add 1 )
++00101 : add the 2 values together ( subtraction using addition, kooky )
+  11011 : result, since the bit at the most significant place is a 1 this is a negative result.
+ -00101 : with a negative result apply the 2’s compliment again and add a negative sign. This gives us a negative 5.
+
+For the purposes of the abacus the result will always be a positive number in division where this would be used and so one should just flip all of the bits on ones fingers and expect the addition to quickly carry out of your fingers space.
+
+Multiplication:
+Multiplication on the abacus is done through repeated addition steps that are offset to the most significant bit so that the one column of the multiplier replaces the leftmost bit and the remaining columns of the multiplier are added left of that.  This is repeated for each “on” bit (a bit set to 1) in the multiplicand.  In other words, for each 1 in the number you are multiplying, replace that one with the other number, adding bits into the number from there.  You can do this by converting the number you are multiplying ( the multiplier ) repeatedly in each position.  In practice you may want to write down the multiplier if it is large or if it is a smaller number it may be easier to remember the pattern.  In our example we will use a smaller number as the multiplier.  I will choose 6 which is 110 in binary. 4 + 2 + 0 = 6.
+Here is an example using 163 x 6.
+--101 00011 : We begin with our converted 163 on the fingers and our multiplier in binary handy “110”.
+--*1*01 00011 : Focus on the 128 column because it is the most significant bit with a 1.
+11001 00011 : This first replacement requires no calculation beyond the conversion. Note that the 110 replaces the 1 from the multiplicand, it does not add to it.  
+1100*1* 00011 : Move focus to the 32 column.  We do not focus on the 64 column because it does not have a 1 value.  We only replace with the multiplier where the multiplicand has a value set for a column.
+11110 00011 : This replacement puts the 0 from the multipliers one column in the 32 column, replacing the one that was there.  The 1 in the 4 column and the 1 in the 8 column of the multiplier are added to the 64  and 128 column.  Since both of those columns are zero at the start of this step they do not carry and settle into the empty columns.
+11110 000*1*1 : Move focus to the 2 column, skipping the empty 16, 8, and 4 columns.
+11110 01101 : This replacement puts the 0 from the multiplier in the 2 column then adds to the empty 4 and 8 columns, filling them with no carry.
+11110 0110*1* : Move focus to the 1 column, this will be the final replacement.
+11110 10010 : This replacement puts the 0 from the multiplier in the 1 column and adds to the 2 and 4 column.  The 2 column is empty and the 1 adds there with no carry. The 4 column and 8 column are full and so the addition to the 4 column flips it to 0 and carries to the 8 column which is full so it is flipped to zero and carries to the 16 column which is empty so the carry is complete.
+This gives us our final answer 1111010010. 163 x 6 = 978. The binary 512 + 256 + 128 + 64 + 0 + 16 + 0 + 0 + 2 + 0 = 978.
+
+Division:
+Division is done with repeated subtractions and a second register in the form of some token that can be switched easily with the fingers, I suggest a row of pennies.  The pennies are required because a division answer has two parts; a quotient and a remainder. The pennies record the quotient and the fingers record the remainder.  
+978 / 12 = 81.5 = 81 R 6
+
+12 = 1100
+*00010 00000 : Top row is the quotient register with a 1 placed for each subtraction.
+ 11110 10010
+-1100
+ 00110 10010 
+*00010 10000
+ 00110 10010
+-00110 0
+ 00000 10010
+*00010 10001
+ 00000 10010
+-00000 01100
+ 00000 00110 : The final subtraction leaves a remainder of 110 or 6.
+That leaves 110 or 6 as the remainder and 1010001 as the answer or 64 + 0 + 16 + 0 + 0 + 0 + 1 = 81
+
+Single Register Division:
+An alternate approach that can perform in only the one register is to perform a pass of subtractions either from the left or right until you are left with a remainder that is less than the divisor (subtracting from the right will usually mean more subtraction steps). Note this value ( using the penny register perhaps ) and subtract this from the dividend.  You can continue to use a single register and do this subtraction without noting it and doing a separate subtraction.  You may use the 2’s compliment subtraction to subtract the value with the overlay addition and the rules of 2’s compliment subtraction. This will leave you with a dividend that can be evenly divided by the divisor.   Then you can begin a division process that starts from the right ( the least significant digit ) and proceeds left.  Once the division works evenly it is often quite clear where the subtractions should go.
+
+978 / 12 = 81.5 = 81 R 6
+
+12 = 1100
+  11110 10010
+- 1100
+=00110 10010 : The first 3 steps are the same as the regular division except that no separate quotient register is used these subtractions are only to determine a remainder.
+  00110 10010
+- 00110 0
+=00000 10010
+  00000 10010
+- 00000 01100
+=00000 00110 : Here we have the remainder and can stop if that is all we care about.  Like for modulo math. Otherwise record it if we want a complete answer.
+  11111 11001 : Now we create the ones compliment of our remainder.
+  11111 11010 : Now we add one to get the 2s compliment. 
+  11111 11010
++11110 10010
+=11110 01100 : Then we add in the dividend again and ignore any digits that go beyond the limit of the fingers.  This works because we know the result will be a positive number and the result uses all of the bits on the hand.  The cutoff to ignore bits should be the size in bits of the larger number ( the dividend ).
+  11110 0000*1 : Now starting at the right and select the point where the first bit of the divisor would be placed to align the first bit in the divisor with a value of one with the first bit in the dividend with a value of one.  In this case that means the first bit.  We subtract the divisor from the dividend there and place a 1 there as the first component of quotient with and mark it with a separation. 
+  11000 *10001 : We move along the dividend to find the next 1 bit and align the first 1 bit in the divisor with it and subtract.  Then place a 1 in the quotient and mark the new separation point. 
+  000*10 10001 : Continue until no more bits remain with value in the dividend section and the quotient section is complete.
+
