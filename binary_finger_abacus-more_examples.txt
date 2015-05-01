@@ -1,0 +1,54 @@
+Examples of the binary abacus functions:
+
+The following 3 examples show a special case of binary multiplication.  
+Similar to how 10 dec shits any number it is multiplied by to the left one column.  
+Binary works much the same way except that the values of 10, 100, 1000 are binary and so 2, 4, 8 etc. 
+
+365x2 = 730
+
+128x4 = 512?
+
+45X8 = 
+
+16x9 =
+
+12X12 = 
+
+14X21=
+
+Subtraction:
+
+15 - 9 =
+
+954-339 = 
+
+23-12=
+
+333-90=
+
+789-45=
+
+Addition:
+
+11 + 11=
+
+16+23=
+
+45 + 166
+
+222+63
+
+134+887
+
+Division:
+
+985/34
+
+65/5
+
+77/7
+
+365/9
+
+109/22
+
